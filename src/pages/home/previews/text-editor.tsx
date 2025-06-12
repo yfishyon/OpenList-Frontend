@@ -28,8 +28,8 @@ function Editor(props: { data?: string | ArrayBuffer; contentType?: string }) {
       }),
   )
   createEffect(
-    on(encoding, (v) => {
-      setValue(text(v))
+    on([() => props.data, encoding], () => {
+      setValue(text(encoding()))
     }),
   )
 
@@ -52,12 +52,10 @@ function Editor(props: { data?: string | ArrayBuffer; contentType?: string }) {
         />
       </Show>
       <MonacoEditorLoader
-        value={text(encoding())}
+        value={value()}
         theme={theme()}
         path={objStore.obj.name}
-        onChange={(value) => {
-          setValue(value)
-        }}
+        onChange={setValue}
       />
       <Show when={userCan("write") || objStore.write}>
         <Button loading={loading()} onClick={onSave}>
